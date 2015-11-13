@@ -16,14 +16,17 @@ import javax.swing.border.EmptyBorder;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.Socket;
 
 public class Game extends JFrame implements ActionListener{
 	JPanel content ;
 	private JTextField textField;
 	private ArrayList<JButton> buttons=new ArrayList<JButton>();
 	private final JTextArea txtrHr;
+	private Socket socket;
 	
-	public Game(String user,boolean server) {
+	public Game(String user,boolean server, Socket socket) {
+		this.socket = socket;
 		setResizable(false);
 		setTitle("TicTacToe");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
