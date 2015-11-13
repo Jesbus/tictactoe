@@ -7,12 +7,16 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.text.ParseException;
 import java.util.ArrayList;
 
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.text.MaskFormatter;
+
+import Main.main;
+
 import javax.swing.JButton;
 import javax.swing.JFormattedTextField;
 import javax.swing.JComboBox;
@@ -62,7 +66,17 @@ public class LogDiag extends JFrame implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource().equals(btnJoinGame)){
-			// TODO
+			String ip = ((String)comboBoxIP.getSelectedItem());
+			try {
+				Socket s = new Socket(ip, 2656);
+				main.startGameFromSocket(s);
+			} catch (UnknownHostException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 		}
 		if(e.getSource().equals(btnCreateGame)){
 			if (server==null) // If there is no server running...
