@@ -21,6 +21,7 @@ public class LogDiag extends JFrame implements ActionListener {
 	private JTextField textField;
 	private JButton btnCreateGame;
 	private JButton btnJoinGame;
+	private JComboBox comboBoxIP;
 	public LogDiag() {
 		setResizable(false);
 		getContentPane().setLayout(new GridLayout(6, 0, 0, 0));
@@ -41,7 +42,7 @@ public class LogDiag extends JFrame implements ActionListener {
 		getContentPane().add(lblServerIp);
 		
 		JComboBox comboBox = new JComboBox();
-		
+		comboBoxIP = comboBox;
 		getContentPane().add(comboBox);
 		try {
 			ArrayList<InetAddress> x= getOpenGames();
@@ -61,6 +62,7 @@ public class LogDiag extends JFrame implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource().equals(btnJoinGame)){
+			// TODO
 		}
 		if(e.getSource().equals(btnCreateGame)){
 			if (server==null) // If there is no server running...
