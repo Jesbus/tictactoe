@@ -16,6 +16,8 @@ import javax.swing.border.EmptyBorder;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.Socket;
 
 public class Game extends JFrame implements ActionListener{
@@ -24,9 +26,55 @@ public class Game extends JFrame implements ActionListener{
 	private ArrayList<JButton> buttons=new ArrayList<JButton>();
 	private final JTextArea txtrHr;
 	private Socket socket;
+	private Thread networkThread = new Thread(new Runnable(){public void run(){
+		try
+		{
+			InputStream is = socket.getInputStream();
+			
+			while (true) // Keep reading from the input stream forever
+			{
+				byte[] lengthByteBuffer = new byte[1]; // Each packet starts with one length byte
+				
+				while (is.read(lengthByteBuffer, 0, 1)<=0){Thread.sleep(1);} // Wait to receive the length byte
+				
+				byte[] packet = new byte[lengthByteBuffer[0]]; // Allocate a buffer of the size of the length byte
+				
+				int position = 0; // We start writing to byte[] packet at packet[0]
+				
+				while (true)
+				{
+					Thread.sleep(1);
+					int amountReceived = is.read(packet, position, lengthByteBuffer[0]-position); // Read from the socket
+					
+					if (amountReceived<=0) continue; // If we didn't receive anything, continue this loop until we do
+					
+					position += amountReceived; // Advance the buffer position by the amount we received
+					
+					if (position==amountReceived)
+					{
+						// The full packet has been read into  byte[] packet, so quit the reading loop
+						break;
+					}
+					else if (position>amountReceived)
+					{
+						// TODO this should never happen
+					}
+				}
+				
+				// TODO parse the actual packet data
+				
+			}
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			// TODO
+		}
+	}});
 	
 	public Game(String user,boolean server, Socket socket) {
 		this.socket = socket;
+		networkThread.start();
 		setResizable(false);
 		setTitle("TicTacToe");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
