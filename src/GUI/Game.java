@@ -5,6 +5,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import java.util.ArrayList;
+import java.util.Stack;
 
 import javax.swing.BoundedRangeModel;
 import javax.swing.JButton;
@@ -26,6 +27,38 @@ public class Game extends JFrame implements ActionListener{
 	private ArrayList<JButton> buttons=new ArrayList<JButton>();
 	private final JTextArea txtrHr;
 	private Socket socket;
+	static class PacketToSend
+	{
+		byte[] packet;
+		PacketToSend(byte[] packet)
+		{
+			this.packet = packet;
+		}
+	}
+	Stack<PacketToSend> packetsToSend = new Stack<>();
+	private Thread networkOutputThread = new Thread(new Runnable(){public void run(){
+		try
+		{
+			while (true)
+			{
+				Thread.sleep(100);
+				synchronized(packetsToSend)
+				{
+					while (!packetsToSend.empty())
+					{
+						// We have to send something
+						PacketToSend pts = packetsToSend.pop();
+						socket.getOutputStream().write(pts.packet, 0, pts.packet.length);
+					}
+				}
+			}
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			// TOOD
+		}
+	}});
 	private Thread networkThread = new Thread(new Runnable(){public void run(){
 		try
 		{
@@ -33,7 +66,7 @@ public class Game extends JFrame implements ActionListener{
 			
 			while (true) // Keep reading from the input stream forever
 			{
-				byte[] lengthByteBuffer = new byte[1]; // Each packet starts with one length byte
+				byte[] lengthByteBuffer = new byte[1]; // Each packet is preceded by one length byte
 				
 				while (is.read(lengthByteBuffer, 0, 1)<=0){Thread.sleep(1);} // Wait to receive the length byte
 				
@@ -61,7 +94,15 @@ public class Game extends JFrame implements ActionListener{
 					}
 				}
 				
-				// TODO parse the actual packet data
+				switch (packet[0]) // The first packet byte describes what the packet is about
+				{
+				case 0x00: // Ping
+					// we can ignore it
+					break;
+				case 0x01: // Move made
+					// The other player made a move.
+					break;
+				}
 				
 			}
 		}
@@ -71,6 +112,16 @@ public class Game extends JFrame implements ActionListener{
 			// TODO
 		}
 	}});
+	
+	private void makeMove(int x, int y)
+	{
+		byte[] movePacket = new byte[8];
+		movePacket[0] = 0x02; // Length
+		movePacket[1] = (byte)x;
+		movePacket[2] = (byte)y;
+		PacketToSend movePts = new PacketToSend(movePacket);
+		packetsToSend.push(movePts);
+	}
 	
 	public Game(String user,boolean server, Socket socket) {
 		this.socket = socket;
@@ -84,48 +135,100 @@ public class Game extends JFrame implements ActionListener{
 		content.setLayout(null);
 		
 		
+		
+		// Top left:
 		JButton button = new JButton("");
+		button.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+			}
+		});
 		button.setBounds(12, 12, 117, 55);
 		content.add(button);
 		buttons.add(button);
 		
-		
+		// Top middle:
 		JButton button_1 = new JButton("");
+		button_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
 		button_1.setBounds(169, 12, 117, 55);
 		content.add(button_1);
 		buttons.add(button_1);
 		
+		
+		// Top right:
 		JButton button_2 = new JButton("");
+		button_2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
 		button_2.setBounds(326, 12, 117, 55);
 		content.add(button_2);
 		buttons.add(button_2);
 		
+		
+		// Middle left:
 		JButton button_3 = new JButton("");
+		button_3.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
 		button_3.setBounds(12, 79, 117, 55);
 		content.add(button_3);
 		buttons.add(button_3);
 		
+		
+		// Center:
 		JButton button_4 = new JButton("");
+		button_4.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
 		button_4.setBounds(169, 79, 117, 55);
 		content.add(button_4);
 		buttons.add(button_4);
 		
+		
+		// Middle right:
 		JButton button_5 = new JButton("");
+		button_5.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
 		button_5.setBounds(326, 79, 117, 55);
 		content.add(button_5);
 		buttons.add(button_5);
 		
+		
+		// Bottom left:
 		JButton button_6 = new JButton("");
+		button_6.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
 		button_6.setBounds(12, 146, 117, 55);
 		content.add(button_6);
 		buttons.add(button_6);
 		
+		
+		// Bottom center:
 		JButton button_7 = new JButton("");
+		button_7.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
 		button_7.setBounds(169, 146, 117, 55);
 		content.add(button_7);
 		buttons.add(button_7);
 		
+		
+		// Bottom right:
 		JButton button_8 = new JButton("");
+		button_8.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
 		button_8.setBounds(326, 146, 117, 55);
 		content.add(button_8);
 		buttons.add(button_8);
