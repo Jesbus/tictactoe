@@ -56,13 +56,29 @@ public class LogDiag extends JFrame implements ActionListener {
 		getContentPane().add(btnJoinGame);
 		btnJoinGame.addActionListener(this);
 	}
+	Net.server server = null;
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource().equals(btnJoinGame)){
 		}
 		if(e.getSource().equals(btnCreateGame)){
-			
+			if (server==null) // If there is no server running...
+			{
+				try {
+					server = new Net.server();
+					btnCreateGame.setText("Cancel game"); // The button will now act as server cancel button
+				} catch (IOException e1) {
+					e1.printStackTrace();
+					// TODO alert the user that the server cannot be hosted.
+				}
+			}
+			else // If there is already a server running, cancel it.
+			{
+				server.cancel();
+				server = null;
+				btnCreateGame.setText("Create game");
+			}
 		}
 	}
 	
