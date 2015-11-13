@@ -101,6 +101,7 @@ public class Game extends JFrame implements ActionListener{
 					break;
 				case 0x01: // Move made
 					// The other player made a move.
+					buttons.get(packet[1]+packet[2]*3).setText("receivedMove");
 					break;
 				}
 				
@@ -116,9 +117,10 @@ public class Game extends JFrame implements ActionListener{
 	private void makeMove(int x, int y)
 	{
 		byte[] movePacket = new byte[8];
-		movePacket[0] = 0x02; // Length
-		movePacket[1] = (byte)x;
-		movePacket[2] = (byte)y;
+		movePacket[0] = 0x03; // Length
+		movePacket[1] = 0x01; // 0x01 means it's a move packet
+		movePacket[2] = (byte)x;
+		movePacket[3] = (byte)y;
 		PacketToSend movePts = new PacketToSend(movePacket);
 		packetsToSend.push(movePts);
 	}
@@ -140,6 +142,7 @@ public class Game extends JFrame implements ActionListener{
 		JButton button = new JButton("");
 		button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				makeMove(0, 0);
 			}
 		});
 		button.setBounds(12, 12, 117, 55);
@@ -150,6 +153,7 @@ public class Game extends JFrame implements ActionListener{
 		JButton button_1 = new JButton("");
 		button_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				makeMove(1, 0);
 			}
 		});
 		button_1.setBounds(169, 12, 117, 55);
@@ -161,6 +165,7 @@ public class Game extends JFrame implements ActionListener{
 		JButton button_2 = new JButton("");
 		button_2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				makeMove(2, 0);
 			}
 		});
 		button_2.setBounds(326, 12, 117, 55);
@@ -172,6 +177,7 @@ public class Game extends JFrame implements ActionListener{
 		JButton button_3 = new JButton("");
 		button_3.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				makeMove(0, 1);
 			}
 		});
 		button_3.setBounds(12, 79, 117, 55);
@@ -183,6 +189,7 @@ public class Game extends JFrame implements ActionListener{
 		JButton button_4 = new JButton("");
 		button_4.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				makeMove(1, 1);
 			}
 		});
 		button_4.setBounds(169, 79, 117, 55);
@@ -194,6 +201,7 @@ public class Game extends JFrame implements ActionListener{
 		JButton button_5 = new JButton("");
 		button_5.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				makeMove(2, 1);
 			}
 		});
 		button_5.setBounds(326, 79, 117, 55);
@@ -205,6 +213,7 @@ public class Game extends JFrame implements ActionListener{
 		JButton button_6 = new JButton("");
 		button_6.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				makeMove(0, 2);
 			}
 		});
 		button_6.setBounds(12, 146, 117, 55);
@@ -216,6 +225,7 @@ public class Game extends JFrame implements ActionListener{
 		JButton button_7 = new JButton("");
 		button_7.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				makeMove(1, 2);
 			}
 		});
 		button_7.setBounds(169, 146, 117, 55);
@@ -227,6 +237,7 @@ public class Game extends JFrame implements ActionListener{
 		JButton button_8 = new JButton("");
 		button_8.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				makeMove(2, 2);
 			}
 		});
 		button_8.setBounds(326, 146, 117, 55);
